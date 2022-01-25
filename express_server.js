@@ -10,7 +10,6 @@ function generateRandomString() {
   for (let i = 0; i < 6; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   };
-
   return text;
 }
 
@@ -31,8 +30,11 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
+app.post("/urls", (req, res) => {  
+  console.log(req.body);  // Log the POST request body to the console { longURL: 'foo.com' } 
+  let rndUrl = generateRandomString();  
+  let dbLongUrl = req.body.longURL;
+  urlDatabase[rndUrl] = dbLongUrl;
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
