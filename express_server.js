@@ -31,11 +31,10 @@ app.get("/urls", (req, res) => {
   res.render("urls_index", templateVars);
 });
 
-app.post("/login", (req, res) => {// !!!
-  console.log('req', req.body)
-  // console.log(res.cookie(username), 'res.cookie(username)')  
-  // console.log('req.username', req.username);
-  res.cookie('username');
+// Cookie
+app.post("/login", (req, res) => {
+  console.log('req username', req.body.username);
+  res.cookie('username', req.body.username);
   res.redirect("/urls");
 });
 
