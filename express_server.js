@@ -3,7 +3,7 @@ const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 
-function generateRandomString() {
+const generateRandomString = function() {
   let text = "";
   const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
@@ -11,7 +11,7 @@ function generateRandomString() {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
   return text;
-}
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -46,7 +46,15 @@ app.get("/u/:shortURL", (req, res) => {
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
-  res.redirect('/urls');
+  res.redirect("/urls");
+});
+
+app.post("/urls/:shortURL/update", (req, res) => {
+  const shortURL = req.params.shortURL;
+  const longURL = urlDatabase[shortURL];
+  urlDatabase[shortURL] = req.body.longURL;
+  const templateVars = { shortURL , longURL };
+  res.render("urls_show", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
