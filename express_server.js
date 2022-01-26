@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const cookie = require('cookie');
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 
@@ -28,6 +29,14 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render("urls_index", templateVars);
+});
+
+app.post("/login", (req, res) => {// !!!
+  console.log('req', req.body)
+  // console.log(res.cookie(username), 'res.cookie(username)')  
+  // console.log('req.username', req.username);
+  res.cookie('username');
+  res.redirect("/urls");
 });
 
 app.post("/urls", (req, res) => {
