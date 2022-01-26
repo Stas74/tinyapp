@@ -11,7 +11,10 @@
 
         <form class="form-inline" method="POST" action="/login">
           <input name="username" placeholder="username">
-          <button type="submit" class="btn btn-secondary"> Submit</button>            
+          <button type="submit" class="btn btn-secondary"> Submit</button>
+          <% if(username != null){ %>                    
+          <a class="nav-item nav-link" href="/urls">Logged in as: <%= username %></a>
+          <% } %>
         </form>
       </div>
     </div>
