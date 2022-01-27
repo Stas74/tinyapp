@@ -9,11 +9,14 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
 
-        <form class="form-inline" method="POST" action="/login">
-          <input name="username" placeholder="username">
-          <button type="submit" class="btn btn-secondary"> Submit</button>
-          <% if(username != null){ %>                    
-          <a class="nav-item nav-link" href="/urls">Logged in as: <%= username %></a>
+        <form class="form-inline" method="POST" action="/login">          
+          <% if(typeof username != 'undefined'){ %>                    
+            <a class="nav-item nav-link" href="/urls">Logged in as: <%= username %></a>
+            <form class="form-inline" method="POST" action="/logout"></form>
+            <button type="submit" class="btn btn-secondary"> Logout</button>            
+          <% } else{ %>
+            <input name="username" placeholder="username">
+            <button type="submit" class="btn btn-secondary"> Submit</button>
           <% } %>
         </form>
       </div>
