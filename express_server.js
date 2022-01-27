@@ -47,7 +47,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  if (req.cookies["user_id"] !== null) {
+  console.log("req.cookies", req.cookies["user_id"]);
+  console.log("users", users)
+  if (req.cookies["user_id"]) {
     const id = req.cookies["user_id"];
     const templateVars = { urls: urlDatabase, username: users[id].email };
     res.render("urls_index", templateVars);
@@ -91,8 +93,30 @@ app.get('/login', (req,res) => {
 
 // Cookie
 app.post("/login", (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect("/urls");
+  // Get email
+  const email = req.body.email;
+  console.log("email", email)
+  // Look for user in user database
+  let id;
+  for (let user in users) {
+    if (users[user]["email"] === email) {
+      id = users[user]["id"];
+      break
+    }
+    console.log("user", user)
+  }
+  if (id) {
+    res.cookie('user_id', id);
+    res.redirect("/urls");
+  } else {
+    res.redirect("/register");
+  }
+  
+  // Grab the id
+  // set the cookie to the id
+  // redirect
+  
+  
 });
 
 // Short URL generation
@@ -148,7 +172,8 @@ app.get("/hello", (req, res) => {
 
 // Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie('username');
+  res.clearCookie('user_id');
+  console.log('123')
   res.redirect("/urls");
 });
 
