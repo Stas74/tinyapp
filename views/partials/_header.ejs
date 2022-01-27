@@ -8,10 +8,10 @@
       <div class="navbar-nav">
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
-                
+        
         <% if(!username) { %>
           <form class="form-inline" method="POST" action="/login">
-            <input name="username" placeholder="username">
+            <input name="email" placeholder="email">
             <button type="submit" class="btn btn-secondary">Submit</button>
           </form>
         <% } else{ %>
