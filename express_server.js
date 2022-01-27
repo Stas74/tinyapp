@@ -23,7 +23,7 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
-const users = { 
+const users = { /*
   "userRandomID": {
     id: "userRandomID", 
     email: "user@example.com", 
@@ -33,7 +33,7 @@ const users = {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
-  }
+  }*/
 }
 
 app.get("/", (req, res) => {
@@ -55,6 +55,17 @@ app.get("/urls", (req, res) => {
 app.get('/register', (req,res) => {
   res.render('urls_register');
   res.end();
+});
+// post register
+app.post('/register', (req,res) => {
+  const newId = generateRandomString();
+  const newEmail = req.body.email;
+  const newPassword = req.body.password;
+  users[newId] = {id: newId, email: newEmail, password: newPassword};
+  console.log('Register valid');
+  res.cookie('user_id',newId); // Set cookie by id
+  console.log('users',users);
+  res.redirect('/urls');
 });
 
 
