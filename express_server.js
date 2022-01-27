@@ -24,23 +24,23 @@ const urlDatabase = {
 
 const users = { /*
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
+    id: "userRandomID",
+    email: "user@example.com",
     password: "purple-monkey-dinosaur"
   },
  "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }*/
-}
+};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
 app.get("/urls", (req, res) => {
-   if (req.cookies["user_id"] !== null) {
+  if (req.cookies["user_id"] !== null) {
     const id = req.cookies["user_id"];
     const templateVars = { urls: urlDatabase, username: users[id].email };
     res.render("urls_index", templateVars);
@@ -99,10 +99,10 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
-  const id = req.cookies["user_id"]; 
+  const id = req.cookies["user_id"];
   urlDatabase[shortURL] = req.body.longURL;
   const templateVars = { shortURL , longURL, username: id ? users[id].email : null };
-    res.render("urls_show", templateVars);
+  res.render("urls_show", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
