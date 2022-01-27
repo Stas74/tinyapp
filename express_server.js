@@ -16,6 +16,13 @@ const generateRandomString = function() {
   }
   return text;
 };
+const verifyEmail = function(email) {
+  for (let id in users) {
+    if (users[id].email === email) {
+      return true;
+    }
+  }
+};
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -58,15 +65,22 @@ app.get('/register', (req,res) => {
 });
 // post register
 app.post('/register', (req,res) => {
-  const newId = generateRandomString();
   const newEmail = req.body.email;
   const newPassword = req.body.password;
-  users[newId] = {id: newId, email: newEmail, password: newPassword};
-  console.log('Register valid');
-  res.cookie('user_id',newId); // Set cookie by id
-  console.log('users',users);
-  // console.log(req.cookie["user_id"]["user_id"]);
-  res.redirect('/urls');
+
+  if (newEmail.length === 0 || newPassword.length === 0) {
+    console.log("Empty");
+    res.sendStatus(400).end();
+  } else if (verifyEmail(newEmail) === true) {
+    res.sendStatus(400).end();
+  } else {
+    const newId = generateRandomString();
+    users[newId] = {id: newId, email: newEmail, password: newPassword};
+    console.log('Register valid');
+    res.cookie('user_id',newId); // Set cookie by id
+    console.log('users',users);
+    res.redirect('/urls');
+  }
 });
 
 
@@ -131,6 +145,13 @@ app.get("/hello", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect("/urls");
+});
+
+
+// 404 page
+app.get('*', (req,res) => {
+  res.render('404');
+  res.end();
 });
 
 app.listen(PORT, () => {
