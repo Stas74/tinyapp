@@ -24,6 +24,7 @@ const urlDatabase = {
 };
 
 
+
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
@@ -38,6 +39,13 @@ app.get("/urls", (req, res) => {
   }
   // res.render("urls_index", templateVars);
 });
+
+// Register
+app.get('/register', (req,res) => {
+  res.render('urls_register');
+  res.end();
+});
+
 
 // Cookie
 app.post("/login", (req, res) => {
