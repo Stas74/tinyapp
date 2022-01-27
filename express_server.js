@@ -83,6 +83,11 @@ app.post('/register', (req,res) => {
   }
 });
 
+// Login
+app.get('/login', (req,res) => {
+  res.render('urls_login');
+  res.end();
+});
 
 // Cookie
 app.post("/login", (req, res) => {
