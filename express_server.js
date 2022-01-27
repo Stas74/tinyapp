@@ -33,7 +33,7 @@ app.get("/urls", (req, res) => {
     const templateVars = { urls: urlDatabase, username: req.cookies.username };
     res.render("urls_index", templateVars);
   } else {
-    const templateVars = { urls: urlDatabase };
+    const templateVars = { urls: urlDatabase, username: req.cookies["username"]};
     res.render("urls_index", templateVars);
   }
   // res.render("urls_index", templateVars);
@@ -95,7 +95,7 @@ app.get("/hello", (req, res) => {
 
 // Logout
 app.post("/logout", (req, res) => {
-  res.clearCookie('username')
+  res.clearCookie('username');
   res.redirect("/urls");
 });
 
