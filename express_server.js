@@ -43,12 +43,12 @@ const urlDatabase = {
 */
 const urlDatabase = {
   b6UTxQ: { // Short URL
-      longURL: "https://www.tsn.ca", // Long URL
-      userID: "aJ48lW" // userID
+    longURL: "https://www.tsn.ca", // Long URL
+    userID: "aJ48lW" // userID
   },
   i3BoGr: {
-      longURL: "https://www.google.ca",
-      userID: "aJ48lW"
+    longURL: "https://www.google.ca",
+    userID: "aJ48lW"
   }
 };
 
@@ -168,30 +168,36 @@ app.post("/urls", (req, res) => {
   if (!req.cookies["user_id"]) {
     res.sendStatus(403).end();
   } else {
-  let shortURL = generateRandomString();
-  let dbLongUrl = req.body.longURL;
-  urlDatabase[shortURL] = dbLongUrl;
-  res.redirect(`/urls/${shortURL}`);
+    let shortURL = generateRandomString();
+    let longURL = req.body.longURL;
+    const userID = req.cookies["user_id"];
+    urlDatabase[shortURL] = {longURL, userID};  //
+    res.redirect(`/urls/${shortURL}`);
   }
 });
 
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL]["longURL"]; //
   res.redirect(longURL);
 });
 
+// Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL];
+  delete urlDatabase[shortURL]; //
   res.redirect("/urls");
 });
 
+// Update
 app.post("/urls/:shortURL/update", (req, res) => {
   const shortURL = req.params.shortURL;
-  const longURL = urlDatabase[shortURL];
+  const longURL = urlDatabase[shortURL]["longURL"];
   const id = req.cookies["user_id"];
-  urlDatabase[shortURL] = req.body.longURL;
+  const editedUrl = req.body.longURL;
+  
+  console.log("update editedUrl", editedUrl);
+  urlDatabase[shortURL]["longURL"] = req.body.longURL;
   const templateVars = { shortURL , longURL, username: id ? users[id].email : null };
   res.render("urls_show", templateVars);
 });
@@ -201,11 +207,11 @@ app.get("/urls/new", (req, res) => {
     res.redirect('/login');
     res.end();
   } else {
-  const id = req.cookies["user_id"];
-  const templateVars = {
-    username: id ? users[id].email : null 
-  };
-  res.render("urls_new", templateVars);
+    const id = req.cookies["user_id"];
+    const templateVars = {
+      username: id ? users[id].email : null
+    };
+    res.render("urls_new", templateVars);
   }
 });
 
