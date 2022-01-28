@@ -182,11 +182,16 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.redirect('/login');
+    res.end();
+  } else {
   const id = req.cookies["user_id"];
   const templateVars = {
-    username: id ? users[id].email : null
+    username: id ? users[id].email : null 
   };
   res.render("urls_new", templateVars);
+  }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
