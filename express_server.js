@@ -16,6 +16,7 @@ const generateRandomString = function() {
   }
   return text;
 };
+
 const verifyEmail = function(email) {
   for (let id in users) {
     if (users[id].email === email) {
@@ -23,6 +24,17 @@ const verifyEmail = function(email) {
     }
   }
 };
+/*
+const verifyPassword = function(password) {
+  for (let id in users){
+    if (users[id].password === password){
+      console.log('func users[id]', users[id])
+      return users[id];
+    }
+  }
+  return false;
+}
+*/
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -47,11 +59,14 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  console.log("req.cookies", req.cookies["user_id"]);
-  console.log("users", users)
+  console.log("req.cookies 123", req.cookies["user_id"]); // Double check after logout
+  console.log("users", users);
   if (req.cookies["user_id"]) {
     const id = req.cookies["user_id"];
+    console.log("id", id);
     const templateVars = { urls: urlDatabase, username: users[id].email };
+    console.log("users[id]", users[id]);
+    console.log(users[id].email, users[id].email);
     res.render("urls_index", templateVars);
   } else {
     const templateVars = { urls: urlDatabase, username: null};
@@ -71,7 +86,6 @@ app.post('/register', (req,res) => {
   const newPassword = req.body.password;
 
   if (newEmail.length === 0 || newPassword.length === 0) {
-    console.log("Empty");
     res.sendStatus(400).end();
   } else if (verifyEmail(newEmail) === true) {
     res.sendStatus(400).end();
@@ -81,29 +95,50 @@ app.post('/register', (req,res) => {
     console.log('Register valid');
     res.cookie('user_id',newId); // Set cookie by id
     console.log('users',users);
-    res.redirect('/urls');
+    res.redirect('/login');
   }
 });
 
-// Login
+// Login page
 app.get('/login', (req,res) => {
   res.render('urls_login');
   res.end();
 });
 
+// Login action
+app.post("/login", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  // If a e-mail cannot be found, return a response with a 403 status code.
+  if (verifyEmail(email) === false) {
+    res.sendStatus(403).end();
+  }
+  // compare the password.  If it does not match, return a response with a 403 status code.
+  for (let id in users) {
+    if (users[id].password === password && verifyEmail(email) === true) {
+      id = users[id]["id"];
+      res.cookie('user_id', id);
+      res.redirect("/urls");
+    } else {
+      res.sendStatus(403).end();
+    }
+  }
+});
+
+/*
 // Cookie
 app.post("/login", (req, res) => {
   // Get email
   const email = req.body.email;
-  console.log("email", email)
+  console.log("email", email);
   // Look for user in user database
   let id;
   for (let user in users) {
     if (users[user]["email"] === email) {
       id = users[user]["id"];
-      break
+      break;
     }
-    console.log("user", user)
+    // console.log("user", user);
   }
   if (id) {
     res.cookie('user_id', id);
@@ -111,13 +146,11 @@ app.post("/login", (req, res) => {
   } else {
     res.redirect("/register");
   }
-  
   // Grab the id
   // set the cookie to the id
   // redirect
-  
-  
 });
+*/
 
 // Short URL generation
 app.post("/urls", (req, res) => {
@@ -173,7 +206,7 @@ app.get("/hello", (req, res) => {
 // Logout
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
-  console.log('123')
+  console.log('Logout');
   res.redirect("/urls");
 });
 
