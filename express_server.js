@@ -154,10 +154,14 @@ app.post("/login", (req, res) => {
 
 // Short URL generation
 app.post("/urls", (req, res) => {
+  if (!req.cookies["user_id"]) {
+    res.sendStatus(403).end();
+  } else {
   let shortURL = generateRandomString();
   let dbLongUrl = req.body.longURL;
   urlDatabase[shortURL] = dbLongUrl;
   res.redirect(`/urls/${shortURL}`);
+  }
 });
 
 app.get("/u/:shortURL", (req, res) => {
