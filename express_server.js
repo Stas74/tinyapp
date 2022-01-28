@@ -35,10 +35,21 @@ const verifyPassword = function(password) {
   return false;
 }
 */
-
+/*
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
+};
+*/
+const urlDatabase = {
+  b6UTxQ: { // Short URL
+      longURL: "https://www.tsn.ca", // Long URL
+      userID: "aJ48lW" // userID
+  },
+  i3BoGr: {
+      longURL: "https://www.google.ca",
+      userID: "aJ48lW"
+  }
 };
 
 const users = { /*
@@ -63,9 +74,9 @@ app.get("/urls", (req, res) => {
   console.log("users", users);
   if (req.cookies["user_id"]) {
     const id = req.cookies["user_id"];
-    console.log("id", id);
+    console.log("id_urls", id);
     const templateVars = { urls: urlDatabase, username: users[id].email };
-    console.log("users[id]", users[id]);
+    console.log("users[id]_urls", users[id]);
     console.log(users[id].email, users[id].email);
     res.render("urls_index", templateVars);
   } else {
