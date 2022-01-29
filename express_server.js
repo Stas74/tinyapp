@@ -9,6 +9,12 @@ const bcrypt = require('bcryptjs');
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
+app.use(
+  cookieSession({
+    name: "session",
+    keys: ["Lighthouse", "Some potatoes"],
+  })
+);
 
 const generateRandomString = function() {
   let text = "";
@@ -93,8 +99,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {  
-  if (req.cookies["user_id"]) {
-    const id = req.cookies["user_id"];
+  // if (req.cookies["user_id"]) {
+  if (req.session.user_id) {
+    // const id = req.cookies["user_id"];
+    const id = req.session.user_id;
     const urls = urlsForUserId(id)
     const templateVars = { urls, username: users[id].email };
     
@@ -126,7 +134,8 @@ app.post('/register', (req,res) => {
     const newId = generateRandomString();
     users[newId] = {id: newId, email: newEmail, password: hashedPassword};
     console.log('Register valid');
-    res.cookie('user_id',newId); // Set cookie by id
+    // res.cookie('user_id',newId); // Set cookie by id
+    req.session.user_id = newId; // Set cookie session
     console.log('users',users);
     res.redirect('/login');
   }
@@ -153,7 +162,8 @@ app.post("/login", (req, res) => {
       return res.send('Incorrect password').end();
     }
     // compare the password.  If it does not match, return a response with a 403 status code.
-    res.cookie('user_id', user.id);
+    // res.cookie('user_id', user.id);
+    req.session.user_id = user.id; // // Set cookie session
     res.redirect("/urls");
   } else {
     return res.send('User not found').end();
@@ -189,12 +199,14 @@ app.post("/login", (req, res) => {
 
 // Short URL generation
 app.post("/urls", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  // if (!req.cookies["user_id"]) {  req.session.user_id
+  if (!req.session.user_id) {
     res.sendStatus(403).end();
   } else {
   let shortURL = generateRandomString();
   let longURL = req.body.longURL;
-  const userID = req.cookies["user_id"];
+  // const userID = req.cookies["user_id"];
+  const userID = req.session.user_id;
   urlDatabase[shortURL] = {longURL, userID};  //
   res.redirect(`/urls/${shortURL}`);
   }
@@ -222,7 +234,8 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if(!req.cookies["user_id"]) {
+  // if(!req.cookies["user_id"]) { req.session.user_id
+  if(!req.session.user_id) {
     res.send("Please register or log in!").end();
   } else {
   const shortURL = req.params.shortURL;
@@ -233,12 +246,14 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 
 // Update
 app.post("/urls/:shortURL/update", (req, res) => { 
-  if(!req.cookies["user_id"]) { 
+  // if(!req.cookies["user_id"]) {  req.session.user_id
+  if(!req.session.user_id) {
     res.send("Please register or log in!").end();
   } else {
   const shortURL = req.params.shortURL;  
   const longURL = urlDatabase[shortURL]["longURL"];  
-  const id = req.cookies["user_id"];
+  // const id = req.cookies["user_id"];
+  const id = req.session.user_id;
   const editedUrl = req.body.longURL;
   
   console.log("update editedUrl", editedUrl)
@@ -249,11 +264,13 @@ app.post("/urls/:shortURL/update", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  if (!req.cookies["user_id"]) {
+  // if (!req.cookies["user_id"]) {
+  if(!req.session.user_id) {
     res.redirect('/login');
     res.end();
   } else {
-  const id = req.cookies["user_id"];
+  // const id = req.cookies["user_id"];
+  const id = req.session.user_id;
   const templateVars = {
     username: id ? users[id].email : null 
   };
@@ -262,7 +279,8 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const id = req.cookies["user_id"];
+  // const id = req.cookies["user_id"];
+  const id = req.session.user_id;
   const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL, username: id ? users[id].email : null };
   res.render("urls_show", templateVars);
 });
