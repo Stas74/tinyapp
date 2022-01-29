@@ -64,6 +64,7 @@ const urlDatabase = {
 };
 */
 const urlDatabase = {
+  /*
   b6UTxQ: { // Short URL
       longURL: "https://www.tsn.ca", // Long URL
       userID: "aJ48lW" // userID
@@ -72,6 +73,7 @@ const urlDatabase = {
       longURL: "https://www.google.ca",
       userID: "aJ48lW"
   }
+  */
 };
 
 const users = { 
@@ -287,10 +289,11 @@ app.get("/hello", (req, res) => {
 });
 
 // Logout
-app.post("/logout", (req, res) => {
-  res.clearCookie('user_id');
+app.post("/logout", (req, res) => {  
+  req.session = null;
   console.log('Logout');
-  res.redirect("/login");
+  const templateVars = { urls: null, username: null};
+  res.render("urls_index", templateVars);  
 });
 
 
