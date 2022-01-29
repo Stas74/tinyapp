@@ -25,9 +25,9 @@ const generateRandomString = function() {
   return text;
 };
 
-const verifyEmail = function(email) {
-  for (let id in users) {
-    if (users[id].email === email) {
+const verifyEmail = function(email, database) {
+  for (let id in database) {
+    if (database[id].email === email) {
       return true;
     }
   }
@@ -45,10 +45,10 @@ const urlsForUserId = function(id) {
   return result;
 }
 
-const getUserByEmail = function(email) {  
-  for (let userId in users) {
-    if (users[userId].email === email) {
-      return users[userId];
+const getUserByEmail = function(email, database) {  
+  for (let userId in database) {
+    if (database[userId].email === email) {
+      return database[userId];
     }
   }
   return null
@@ -128,7 +128,7 @@ app.post('/register', (req,res) => {
 
   if (newEmail.length === 0 || newPassword.length === 0) {
     res.sendStatus(400).end();
-  } else if (verifyEmail(newEmail) === true) {
+  } else if (verifyEmail(newEmail, users) === true) {
     res.sendStatus(400).end();
   } else {
     const newId = generateRandomString();
@@ -152,10 +152,10 @@ app.post("/login", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
   // If a e-mail cannot be found, return a response with a 403 status code.
-  if (verifyEmail(email) === false) {
+  if (verifyEmail(email, users) === false) {
     return res.sendStatus(403).end();
   }
-  const user = getUserByEmail(email);
+  const user = getUserByEmail(email, users);
   if (user) {
     const hashCheck = bcrypt.compareSync(password, user.password);    
     if (!hashCheck) {
