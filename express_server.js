@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
-const getUserByEmail = require("./helpers")
+const {getUserByEmail} = require("./helpers")
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
