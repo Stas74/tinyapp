@@ -147,7 +147,8 @@ app.post("/login", (req, res) => {
   }
   const user = getUserByEmail(email);
   if (user) {
-    if (user.password !== password ) {
+    const hashCheck = bcrypt.compareSync(password, user.password);    
+    if (!hashCheck) {
       return res.send('Incorrect password').end();
     }
     // compare the password.  If it does not match, return a response with a 403 status code.
