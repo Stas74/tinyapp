@@ -218,13 +218,20 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
+  if(!req.cookies["user_id"]) {
+    res.send("Please register or log in!").end();
+  } else {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL]; //
   res.redirect("/urls");
+  }
 });
 
 // Update
-app.post("/urls/:shortURL/update", (req, res) => {  
+app.post("/urls/:shortURL/update", (req, res) => { 
+  if(!req.cookies["user_id"]) { 
+    res.send("Please register or log in!").end();
+  } else {
   const shortURL = req.params.shortURL;  
   const longURL = urlDatabase[shortURL]["longURL"];  
   const id = req.cookies["user_id"];
@@ -234,6 +241,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
   urlDatabase[shortURL]["longURL"] = req.body.longURL;
   const templateVars = { shortURL , longURL, username: id ? users[id].email : null };
   res.render("urls_show", templateVars);
+  }
 });
 
 app.get("/urls/new", (req, res) => {
@@ -267,7 +275,7 @@ app.get("/hello", (req, res) => {
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
   console.log('Logout');
-  res.redirect("/urls");
+  res.redirect("/login");
 });
 
 
