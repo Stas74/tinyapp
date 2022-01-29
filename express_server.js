@@ -24,6 +24,27 @@ const verifyEmail = function(email) {
     }
   }
 };
+
+const urlsForUserId = function(id) {
+  const result ={};
+  const shortUrls = Object.keys(urlDatabase);
+  for (const shortUrl of shortUrls) {
+    const url = urlDatabase[shortUrl];
+    if (url.userID === id) {
+      result[shortUrl] = url;
+    }
+  }
+  return result;
+}
+
+const getUserByEmail = function(email) {  
+  for (let userId in users) {
+    if (users[userId].email === email) {
+      return users[userId];
+    }
+  }
+  return null
+}
 /*
 const verifyPassword = function(password) {
   for (let id in users){
@@ -69,19 +90,17 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.get("/urls", (req, res) => {
-  console.log("req.cookies 123", req.cookies["user_id"]); // Double check after logout
-  console.log("users", users);
+app.get("/urls", (req, res) => {  
   if (req.cookies["user_id"]) {
     const id = req.cookies["user_id"];
-    console.log("id_urls", id);
-    const templateVars = { urls: urlDatabase, username: users[id].email };
-    console.log("users[id]_urls", users[id]);
-    console.log(users[id].email, users[id].email);
+    const urls = urlsForUserId(id)
+    const templateVars = { urls, username: users[id].email };
+    
     res.render("urls_index", templateVars);
   } else {
-    const templateVars = { urls: urlDatabase, username: null};
-    res.render("urls_index", templateVars);
+    res.sendStatus(401).end();
+    // const templateVars = { urls: urlDatabase, username: null};
+    // res.render("urls_index", templateVars);
   }
   // res.render("urls_index", templateVars);
 });
@@ -122,17 +141,18 @@ app.post("/login", (req, res) => {
   const password = req.body.password;
   // If a e-mail cannot be found, return a response with a 403 status code.
   if (verifyEmail(email) === false) {
-    res.sendStatus(403).end();
+    return res.sendStatus(403).end();
   }
-  // compare the password.  If it does not match, return a response with a 403 status code.
-  for (let id in users) {
-    if (users[id].password === password && verifyEmail(email) === true) {
-      id = users[id]["id"];
-      res.cookie('user_id', id);
-      res.redirect("/urls");
-    } else {
-      res.sendStatus(403).end();
+  const user = getUserByEmail(email);
+  if (user) {
+    if (user.password !== password ) {
+      return res.send('Incorrect password').end();
     }
+    // compare the password.  If it does not match, return a response with a 403 status code.
+    res.cookie('user_id', user.id);
+    res.redirect("/urls");
+  } else {
+    return res.send('User not found').end();
   }
 });
 
@@ -180,7 +200,7 @@ app.post("/urls", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {    
   const shortURL = req.params.shortURL;
   let found = false;
-  for (let short in urlDatabase) {      
+  for (let short in urlDatabase) { /// ???? /////
     if (short !== shortURL) {    
       found = false;      
     } else { 
