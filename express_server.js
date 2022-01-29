@@ -3,6 +3,8 @@ const app = express();
 const PORT = 8080; // default port 8080
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcryptjs');
+
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
@@ -10,7 +12,6 @@ app.use(cookieParser());
 const generateRandomString = function() {
   let text = "";
   const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
   for (let i = 0; i < 6; i++) {
     text += possible.charAt(Math.floor(Math.random() * possible.length));
   }
@@ -114,6 +115,7 @@ app.get('/register', (req,res) => {
 app.post('/register', (req,res) => {
   const newEmail = req.body.email;
   const newPassword = req.body.password;
+  const hashedPassword = bcrypt.hashSync(newPassword, 10);
 
   if (newEmail.length === 0 || newPassword.length === 0) {
     res.sendStatus(400).end();
@@ -121,7 +123,7 @@ app.post('/register', (req,res) => {
     res.sendStatus(400).end();
   } else {
     const newId = generateRandomString();
-    users[newId] = {id: newId, email: newEmail, password: newPassword};
+    users[newId] = {id: newId, email: newEmail, password: hashedPassword};
     console.log('Register valid');
     res.cookie('user_id',newId); // Set cookie by id
     console.log('users',users);
