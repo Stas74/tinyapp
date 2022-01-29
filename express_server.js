@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
+const getUserByEmail = require("./helpers")
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -44,7 +45,7 @@ const urlsForUserId = function(id) {
   }
   return result;
 }
-
+/*
 const getUserByEmail = function(email, database) {  
   for (let userId in database) {
     if (database[userId].email === email) {
@@ -53,17 +54,9 @@ const getUserByEmail = function(email, database) {
   }
   return null
 }
-/*
-const verifyPassword = function(password) {
-  for (let id in users){
-    if (users[id].password === password){
-      console.log('func users[id]', users[id])
-      return users[id];
-    }
-  }
-  return false;
-}
 */
+
+
 /*
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
