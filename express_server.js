@@ -69,9 +69,7 @@ app.post('/register', (req,res) => {
   } else {
     const newId = generateRandomString();
     users[newId] = {id: newId, email: newEmail, password: hashedPassword};
-    console.log('Register valid');
     req.session.userId = newId;
-    console.log('users',users);
     res.redirect('/login');
   }
 });
@@ -130,7 +128,6 @@ app.get("/u/:shortURL", (req, res) => {
   }
   if (found === true) {
     const longURL = urlDatabase[shortURL]["longURL"];
-    console.log("else longURL", longURL);
     return res.redirect(longURL);
   } else {
     return res.end("This page doesn`t exist");
@@ -190,7 +187,6 @@ app.get("/hello", (req, res) => {
 // Logout
 app.post("/logout", (req, res) => {
   req.session = null;
-  console.log('Logout');
   const templateVars = { urls: null, username: null};
   res.render("urls_index", templateVars);
 });
