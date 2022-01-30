@@ -80,13 +80,13 @@ app.get('/login', (req,res) => {
 // Post Login
 app.post("/login", (req, res) => {
   const email = req.body.email;
-  const password = req.body.password;  
+  const password = req.body.password;
   const user = getUserByEmail(email, users);
   if (user) {
     const hashCheck = bcrypt.compareSync(password, user.password);
     if (!hashCheck) {
       return res.send('Incorrect password').end();
-    }    
+    }
     req.session.userId = user.id;
     res.redirect("/urls");
   } else {
