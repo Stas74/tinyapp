@@ -53,7 +53,7 @@ app.get('/register', (req,res) => {
   res.end();
 });
 
-// post register
+// Post Register
 app.post('/register', (req,res) => {
   const newEmail = req.body.email;
   const newPassword = req.body.password;
@@ -77,21 +77,16 @@ app.get('/login', (req,res) => {
   res.end();
 });
 
-// Login action
+// Post Login
 app.post("/login", (req, res) => {
   const email = req.body.email;
-  const password = req.body.password;
-  // If a e-mail cannot be found, return a response with a 403 status code.
-  if (verifyEmail(email, users) === false) {
-    return res.sendStatus(403).end();
-  }
+  const password = req.body.password;  
   const user = getUserByEmail(email, users);
   if (user) {
     const hashCheck = bcrypt.compareSync(password, user.password);
     if (!hashCheck) {
       return res.send('Incorrect password').end();
-    }
-    // compare the password.  If it does not match, return a response with a 403 status code.
+    }    
     req.session.userId = user.id;
     res.redirect("/urls");
   } else {
@@ -112,11 +107,11 @@ app.post("/urls", (req, res) => {
   }
 });
 
-
+// Redirect to long URL
 app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let found = false;
-  for (let short in urlDatabase) { /// ???? /////
+  for (let short in urlDatabase) {
     if (short !== shortURL) {
       found = false;
     } else {
