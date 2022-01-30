@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
 const {getUserByEmail} = require("./helpers");
+const {generateRandomString} = require("./helpers");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -16,15 +17,6 @@ app.use(
     keys: ["Lighthouse", "Some potatoes"],
   })
 );
-
-const generateRandomString = function() {
-  let text = "";
-  const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  for (let i = 0; i < 6; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
 
 const verifyEmail = function(email, database) {
   for (let id in database) {
@@ -152,7 +144,7 @@ app.get("/u/:shortURL", (req, res) => {
   }
 });
 
-// Delete
+// Delete short URL
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (!req.session.userId) {
     res.send("Please register or log in!").end();
@@ -163,7 +155,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
-// Update
+// Update short URL
 app.post("/urls/:shortURL/update", (req, res) => {
   if (!req.session.userId) {
     res.send("Please register or log in!").end();
