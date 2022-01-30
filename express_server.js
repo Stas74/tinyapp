@@ -7,6 +7,7 @@ const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
 const {getUserByEmail} = require("./helpers");
 const {generateRandomString} = require("./helpers");
+const {verifyEmail} = require("./helpers");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -17,14 +18,6 @@ app.use(
     keys: ["Lighthouse", "Some potatoes"],
   })
 );
-
-const verifyEmail = function(email, database) {
-  for (let id in database) {
-    if (database[id].email === email) {
-      return true;
-    }
-  }
-};
 
 const urlsForUserId = function(id) {
   const result = {};

@@ -17,5 +17,12 @@ const generateRandomString = function() {
   return text;
 };
 
-module.exports = {getUserByEmail, generateRandomString};
-// module.exports = {generateRandomString};
+const verifyEmail = function(email, database) {
+  for (let id in database) {
+    if (database[id].email === email) {
+      return true;
+    }
+  }
+};
+
+module.exports = {getUserByEmail, generateRandomString, verifyEmail};
