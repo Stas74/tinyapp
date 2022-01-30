@@ -63,9 +63,9 @@ app.post('/register', (req,res) => {
   const hashedPassword = bcrypt.hashSync(newPassword, 10);
 
   if (newEmail.length === 0 || newPassword.length === 0) {
-    res.sendStatus(400).end();
+    res.send('Empty fields').end();
   } else if (verifyEmail(newEmail, users) === true) {
-    res.sendStatus(400).end();
+    res.send('Email already exists').end();
   } else {
     const newId = generateRandomString();
     users[newId] = {id: newId, email: newEmail, password: hashedPassword};
