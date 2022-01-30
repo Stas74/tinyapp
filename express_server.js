@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const cookieSession = require("cookie-session");
 const bcrypt = require('bcryptjs');
-const {getUserByEmail} = require("./helpers")
+const {getUserByEmail} = require("./helpers");
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -35,7 +35,7 @@ const verifyEmail = function(email, database) {
 };
 
 const urlsForUserId = function(id) {
-  const result ={};
+  const result = {};
   const shortUrls = Object.keys(urlDatabase);
   for (const shortUrl of shortUrls) {
     const url = urlDatabase[shortUrl];
@@ -44,70 +44,25 @@ const urlsForUserId = function(id) {
     }
   }
   return result;
-}
-/*
-const getUserByEmail = function(email, database) {  
-  for (let userId in database) {
-    if (database[userId].email === email) {
-      return database[userId];
-    }
-  }
-  return null
-}
-*/
-
-
-/*
-const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
-};
-*/
-const urlDatabase = {
-  /*
-  b6UTxQ: { // Short URL
-      longURL: "https://www.tsn.ca", // Long URL
-      userID: "aJ48lW" // userID
-  },
-  i3BoGr: {
-      longURL: "https://www.google.ca",
-      userID: "aJ48lW"
-  }
-  */
 };
 
-const users = { 
-  "aJ48lW": {
-    id: "aJ48lW",
-    email: "user@example.com",
-    password: "1"
-  }/*,
- "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }*/
-};
+const urlDatabase = {};
+
+const users = {};
 
 app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.get("/urls", (req, res) => {  
-  // if (req.cookies["user_id"]) {
-  if (req.session.user_id) {
-    // const id = req.cookies["user_id"];
-    const id = req.session.user_id;
-    const urls = urlsForUserId(id)
+app.get("/urls", (req, res) => {
+  if (req.session.userId) {
+    const id = req.session.userId;
+    const urls = urlsForUserId(id);
     const templateVars = { urls, username: users[id].email };
-    
     res.render("urls_index", templateVars);
   } else {
     res.sendStatus(401).end();
-    // const templateVars = { urls: urlDatabase, username: null};
-    // res.render("urls_index", templateVars);
   }
-  // res.render("urls_index", templateVars);
 });
 
 // Register
@@ -115,6 +70,7 @@ app.get('/register', (req,res) => {
   res.render('urls_register');
   res.end();
 });
+
 // post register
 app.post('/register', (req,res) => {
   const newEmail = req.body.email;
@@ -129,8 +85,7 @@ app.post('/register', (req,res) => {
     const newId = generateRandomString();
     users[newId] = {id: newId, email: newEmail, password: hashedPassword};
     console.log('Register valid');
-    // res.cookie('user_id',newId); // Set cookie by id
-    req.session.user_id = newId; // Set cookie session
+    req.session.userId = newId;
     console.log('users',users);
     res.redirect('/login');
   }
@@ -152,75 +107,45 @@ app.post("/login", (req, res) => {
   }
   const user = getUserByEmail(email, users);
   if (user) {
-    const hashCheck = bcrypt.compareSync(password, user.password);    
+    const hashCheck = bcrypt.compareSync(password, user.password);
     if (!hashCheck) {
       return res.send('Incorrect password').end();
     }
     // compare the password.  If it does not match, return a response with a 403 status code.
-    // res.cookie('user_id', user.id);
-    req.session.user_id = user.id; // // Set cookie session
+    req.session.userId = user.id;
     res.redirect("/urls");
   } else {
     return res.send('User not found').end();
   }
 });
 
-/*
-// Cookie
-app.post("/login", (req, res) => {
-  // Get email
-  const email = req.body.email;
-  console.log("email", email);
-  // Look for user in user database
-  let id;
-  for (let user in users) {
-    if (users[user]["email"] === email) {
-      id = users[user]["id"];
-      break;
-    }
-    // console.log("user", user);
-  }
-  if (id) {
-    res.cookie('user_id', id);
-    res.redirect("/urls");
-  } else {
-    res.redirect("/register");
-  }
-  // Grab the id
-  // set the cookie to the id
-  // redirect
-});
-*/
-
 // Short URL generation
 app.post("/urls", (req, res) => {
-  // if (!req.cookies["user_id"]) {  req.session.user_id
-  if (!req.session.user_id) {
+  if (!req.session.userId) {
     res.sendStatus(403).end();
   } else {
-  let shortURL = generateRandomString();
-  let longURL = req.body.longURL;
-  // const userID = req.cookies["user_id"];
-  const userID = req.session.user_id;
-  urlDatabase[shortURL] = {longURL, userID};  //
-  res.redirect(`/urls/${shortURL}`);
+    let shortURL = generateRandomString();
+    let longURL = req.body.longURL;
+    const userID = req.session.userId;
+    urlDatabase[shortURL] = {longURL, userID};
+    res.redirect(`/urls/${shortURL}`);
   }
 });
 
 
-app.get("/u/:shortURL", (req, res) => {    
+app.get("/u/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   let found = false;
   for (let short in urlDatabase) { /// ???? /////
-    if (short !== shortURL) {    
-      found = false;      
-    } else { 
-      found = true;        
-    }         
+    if (short !== shortURL) {
+      found = false;
+    } else {
+      found = true;
+    }
   }
   if (found === true) {
-    const longURL = urlDatabase[shortURL]["longURL"]; //
-    console.log("else longURL", longURL)
+    const longURL = urlDatabase[shortURL]["longURL"];
+    console.log("else longURL", longURL);
     return res.redirect(longURL);
   } else {
     return res.end("This page doesn`t exist");
@@ -229,53 +154,42 @@ app.get("/u/:shortURL", (req, res) => {
 
 // Delete
 app.post("/urls/:shortURL/delete", (req, res) => {
-  // if(!req.cookies["user_id"]) { req.session.user_id
-  if(!req.session.user_id) {
+  if (!req.session.userId) {
     res.send("Please register or log in!").end();
   } else {
-  const shortURL = req.params.shortURL;
-  delete urlDatabase[shortURL]; //
-  res.redirect("/urls");
+    const shortURL = req.params.shortURL;
+    delete urlDatabase[shortURL];
+    res.redirect("/urls");
   }
 });
 
 // Update
-app.post("/urls/:shortURL/update", (req, res) => { 
-  // if(!req.cookies["user_id"]) {  req.session.user_id
-  if(!req.session.user_id) {
+app.post("/urls/:shortURL/update", (req, res) => {
+  if (!req.session.userId) {
     res.send("Please register or log in!").end();
   } else {
-  const shortURL = req.params.shortURL;  
-  const longURL = urlDatabase[shortURL]["longURL"];  
-  // const id = req.cookies["user_id"];
-  const id = req.session.user_id;
-  const editedUrl = req.body.longURL;
-  
-  console.log("update editedUrl", editedUrl)
-  urlDatabase[shortURL]["longURL"] = req.body.longURL;
-  const templateVars = { shortURL , longURL, username: id ? users[id].email : null };
-  res.render("urls_show", templateVars);
+    const shortURL = req.params.shortURL;
+    const longURL = urlDatabase[shortURL]["longURL"];
+    const id = req.session.userId;
+    urlDatabase[shortURL]["longURL"] = req.body.longURL;
+    const templateVars = { shortURL , longURL, username: id ? users[id].email : null };
+    res.render("urls_show", templateVars);
   }
 });
 
 app.get("/urls/new", (req, res) => {
-  // if (!req.cookies["user_id"]) {
-  if(!req.session.user_id) {
+  if (!req.session.userId) {
     res.redirect('/login');
     res.end();
   } else {
-  // const id = req.cookies["user_id"];
-  const id = req.session.user_id;
-  const templateVars = {
-    username: id ? users[id].email : null 
-  };
-  res.render("urls_new", templateVars);
+    const id = req.session.userId;
+    const templateVars = { username: id ? users[id].email : null };
+    res.render("urls_new", templateVars);
   }
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  // const id = req.cookies["user_id"];
-  const id = req.session.user_id;
+  const id = req.session.userId;
   const templateVars = { shortURL: req.params.shortURL, longURL: req.params.longURL, username: id ? users[id].email : null };
   res.render("urls_show", templateVars);
 });
@@ -289,11 +203,11 @@ app.get("/hello", (req, res) => {
 });
 
 // Logout
-app.post("/logout", (req, res) => {  
+app.post("/logout", (req, res) => {
   req.session = null;
   console.log('Logout');
   const templateVars = { urls: null, username: null};
-  res.render("urls_index", templateVars);  
+  res.render("urls_index", templateVars);
 });
 
 
