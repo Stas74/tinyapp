@@ -4,11 +4,11 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 ## Final Product
 
-!["Screeshot of Create short URL"](https://raw.githubusercontent.com/Stas74/tinyapp/9b370dfec491110d7fcf2f8a0dbe43fb98fce58d/docs/create-new-url-page.PNG)
+!["Screeshot of Create short URL"](https://github.com/Stas74/tinyapp/blob/master/docs/create-new-url-page.PNG)
 
-!["Screeshot of URLs page"](https://raw.githubusercontent.com/Stas74/tinyapp/9b370dfec491110d7fcf2f8a0dbe43fb98fce58d/docs/urls-page.png)
+!["Screeshot of URLs page"](https://github.com/Stas74/tinyapp/blob/master/docs/urls-page.png)
 
-!["Screeshot of Edit short URL"](https://raw.githubusercontent.com/Stas74/tinyapp/9b370dfec491110d7fcf2f8a0dbe43fb98fce58d/docs/edit-page.png)
+!["Screeshot of Edit short URL"](https://github.com/Stas74/tinyapp/blob/master/docs/edit-page.png)
 
 ## Dependencies
 
