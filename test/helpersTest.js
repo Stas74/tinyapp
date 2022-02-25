@@ -1,6 +1,6 @@
-const { assert } = require('chai');
+const { assert } = require("chai");
 
-const { getUserByEmail } = require('../helpers.js');
+const { getUserByEmail } = require("../helpers.js");
 
 const testUsers = {
   "userRandomID": {
@@ -15,14 +15,14 @@ const testUsers = {
   }
 };
 
-describe('getUserByEmail', function() {
-  it('should return a user with valid email', function() {
+describe("getUserByEmail", function() {
+  it("should return a user with valid email", function() {
     const user = getUserByEmail("user@example.com", testUsers);
     const expectedUserID = "userRandomID";
     // Write your assert statement here
     assert.strictEqual(user.id, expectedUserID);
   });
-  it('should return an undefined', function() {
+  it("should return an undefined", function() {
     const user = getUserByEmail("user3@example.com", testUsers);
     const expectedUserID = undefined;
     assert.equal(user, expectedUserID);

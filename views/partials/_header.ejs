@@ -9,12 +9,13 @@
         <a class="nav-item nav-link" href="/urls">My URLs</a>
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         
-        <% if(!username) { %>
-          <a class="nav-item nav-link" href="/login">Login</a>
-          <form class="form-inline" method="POST" action="/login" href="/login">
+        <% if(!username) { %>          
+          <form class="form-inline" method="GET" action="/login" href="/login">
+            <button style="margin-right: 20px;" class="btn btn-primary" type="submit" href="/login">Login</button> 
           </form>
-          <a class="nav-item nav-link" href="/register">Register</a>
-          <form class="form-inline" method="POST" action="/register" href="/register">
+          
+          <form class="form-inline" method="GET" action="/register" href="/register">
+           <button class="btn btn-primary" type="submit" href="/register">Register</button> 
           </form>
 
         <% } else{ %>
