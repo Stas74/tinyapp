@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcryptjs");
 const { getUserByEmail } = require("./helpers");
-const { generateRandomString,  verifyEmail } = require("./helpers");
+const { generateRandomString, verifyEmail } = require("./helpers");
 // const { verifyEmail } = require("./helpers");
 
 app.set("view engine", "ejs");
@@ -56,8 +56,12 @@ app.get("/urls", (req, res) => {
 
 // Register
 app.get("/register", (req, res) => {
-  res.render("urls_register");
-  res.end();
+  if (!req.session.userId) {
+    res.render("urls_register");
+    res.end();
+  } else {
+    res.redirect("/urls");
+  }
 });
 
 // Post Register
@@ -80,8 +84,12 @@ app.post("/register", (req, res) => {
 
 // Login page
 app.get("/login", (req, res) => {
-  res.render("urls_login");
-  res.end();
+  if (!req.session.userId) {
+    res.render("urls_login");
+    res.end();
+  } else {
+    res.redirect("/urls");
+  }
 });
 
 // Post Login
@@ -204,7 +212,7 @@ app.get("/urls.json", (req, res) => {
 app.post("/logout", (req, res) => {
   req.session = null;
   const templateVars = { urls: null, username: null };
-  res.render("urls_index", templateVars);
+  res.redirect("/urls");
 });
 
 // 404 page
