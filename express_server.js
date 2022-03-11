@@ -129,6 +129,7 @@ app.get("/u/:shortURL", (req, res) => {
   for (let short in urlDatabase) {
     if (short !== shortURL) {
       found = false;
+      return res.end("This page doesn`t exist");
     } else {
       found = true;
     }
@@ -172,7 +173,8 @@ app.post("/urls/:shortURL/update", (req, res) => {
         longURL,
         username: id ? users[id].email : null,
       };
-      res.render("urls_show", templateVars);
+      res.render("urls_show", templateVars); // res.redirect("/urls"); ???
+      
     } else {
       res.send("You can't update URL!").end();
     }
