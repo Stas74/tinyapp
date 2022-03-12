@@ -35,6 +35,7 @@ const urlDatabase = {};
 
 const users = {};
 
+
 app.get("/", (req, res) => {
   if (req.session.userId) {
     res.redirect("/urls");
@@ -43,6 +44,7 @@ app.get("/", (req, res) => {
   }
 });
 
+// Urls page
 app.get("/urls", (req, res) => {
   if (req.session.userId) {
     const id = req.session.userId;
@@ -50,15 +52,17 @@ app.get("/urls", (req, res) => {
     const templateVars = { urls, username: users[id].email };
     res.render("urls_index", templateVars);
   } else {
-    res.sendStatus(401).end();
+    res.redirect("/login");
   }
 });
 
 // Register
 app.get("/register", (req, res) => {
   if (!req.session.userId) {
-    res.render("urls_register");
-    res.end();
+    const templateVars = {
+      username: null,
+    }
+    res.render("urls_register", templateVars);    
   } else {
     res.redirect("/urls");
   }
@@ -85,8 +89,11 @@ app.post("/register", (req, res) => {
 // Login page
 app.get("/login", (req, res) => {
   if (!req.session.userId) {
-    res.render("urls_login");
-    res.end();
+    const templateVars = {
+      username: null,
+    }
+    res.render("urls_login", templateVars);
+    
   } else {
     res.redirect("/urls");
   }
