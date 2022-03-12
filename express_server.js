@@ -52,7 +52,10 @@ app.get("/urls", (req, res) => {
     const templateVars = { urls, username: users[id].email };
     res.render("urls_index", templateVars);
   } else {
-    res.redirect("/login");
+    // res.redirect("/login");
+    const templateVars = { urls: null, username: null };
+    res.render("urls_index", templateVars);
+
   }
 });
 
@@ -242,8 +245,7 @@ app.get("/urls.json", (req, res) => {
 
 // Logout
 app.post("/logout", (req, res) => {
-  req.session = null;
-  const templateVars = { urls: null, username: null };
+  req.session = null;  
   res.redirect("/urls");
 });
 
