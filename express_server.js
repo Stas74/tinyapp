@@ -131,15 +131,16 @@ app.get("/u/:shortURL", (req, res) => {
       found = false;
       return res.end("This page doesn`t exist");
     } else {
-      found = true;
+      const longURL = urlDatabase[shortURL]["longURL"];
+      return res.redirect(longURL);
     }
   }
-  if (found === true) {
-    const longURL = urlDatabase[shortURL]["longURL"];
-    return res.redirect(longURL);
-  } else {
-    return res.end("This page doesn`t exist");
-  }
+  // if (found === true) {
+  //   const longURL = urlDatabase[shortURL]["longURL"];
+  //   return res.redirect(longURL);
+  // } else {
+  //   return res.end("This page doesn`t exist");
+  // }
 });
 
 // Delete short URL
@@ -158,6 +159,29 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
+// showing edit page
+app.get("/urls/:shortURL/edit", (req, res) => {
+  const id = req.session.userId
+  if (!req.session.userId) {
+    res.send("Please register or log in!").end();
+  } else {
+    const shortURL = req.params.shortURL;
+    for (let urlId in urlDatabase) {
+      if (urlId !== shortURL) {        
+        return res.end("This page doesn`t exist");
+      } else {
+        const longURL = urlDatabase[urlId].longURL;
+        const templateVars = {
+          shortURL,
+          longURL,
+          username: id ? users[id].email : null,
+        };
+        return res.render("urls_show", templateVars);
+      }
+    }    
+  }
+})
+
 // Update short URL
 app.post("/urls/:shortURL/update", (req, res) => {
   if (!req.session.userId) {
@@ -173,8 +197,7 @@ app.post("/urls/:shortURL/update", (req, res) => {
         longURL,
         username: id ? users[id].email : null,
       };
-      res.render("urls_show", templateVars); // res.redirect("/urls"); ???
-      
+      res.redirect("/urls");      
     } else {
       res.send("You can't update URL!").end();
     }
