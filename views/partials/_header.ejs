@@ -10,14 +10,12 @@
         <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
         
         <% if(!username) { %>          
-          <!-- <form class="form-inline" method="GET" action="/login" href="/login">
+          <form class="form-inline" method="GET" action="/login" href="/login">
             <button style="margin-right: 20px;" class="btn btn-primary" type="submit" href="/login">Login</button> 
-          </form> -->
-          <a href="/login" class="btn btn-warning">Login</a>
-          <a href="/register" class="btn btn-success">Register</a>
-          <!-- <form class="form-inline" method="GET" action="/register" href="/register">
+          </form>          
+          <form class="form-inline" method="GET" action="/register" href="/register">
            <button class="btn btn-primary" type="submit" href="/register">Register</button> 
-          </form> -->
+          </form>
 
         <% } else{ %>
           <a class="nav-item nav-link" href="/urls">Logged in as: <%= username %></a>
